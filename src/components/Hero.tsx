@@ -1,11 +1,30 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Code2, ArrowRight, ArrowDown } from 'lucide-react';
 
+const TITLES = [
+  'Full Stack Developer',
+  'Problem Solver',
+  'Aspiring Software Engineer',
+];
+
 export const Hero: React.FC = () => {
+  const [titleIndex, setTitleIndex] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (shouldReduceMotion) return;
+
+    const interval = setInterval(() => {
+      setTitleIndex((prev) => (prev + 1) % TITLES.length);
+    }, 3500); // Hold ~2.8s + 0.7s transition duration = 3.5s cycle
+
+    return () => clearInterval(interval);
+  }, [shouldReduceMotion]);
+
   const scrollToProjects = () => {
     const el = document.getElementById('projects');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -41,11 +60,28 @@ export const Hero: React.FC = () => {
             </span>
           </div>
 
-          {/* Main Title Heading */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-semibold text-[#0F172A] tracking-tight leading-[1.1]">
+          {/* Main Title Heading with Smooth Rotating Headline */}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-semibold text-[#0F172A] tracking-tight leading-[1.15]">
             Kurasa John Wesly <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C99A2E] via-[#D4AF37] to-[#E7C66A] font-serif font-bold italic">
-              Full Stack Developer
+            <span className="relative inline-block h-[1.25em] w-full overflow-hidden align-bottom">
+              {shouldReduceMotion ? (
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F0C75E] via-[#D4AF37] to-[#C99A2E] font-serif font-bold italic block">
+                  Full Stack Developer
+                </span>
+              ) : (
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={TITLES[titleIndex]}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -16 }}
+                    transition={{ duration: 0.7, ease: [0.4, 0.0, 0.2, 1] }}
+                    className="text-transparent bg-clip-text bg-gradient-to-r from-[#F0C75E] via-[#D4AF37] to-[#C99A2E] font-serif font-bold italic block absolute left-0 top-0 whitespace-nowrap"
+                  >
+                    {TITLES[titleIndex]}
+                  </motion.span>
+                </AnimatePresence>
+              )}
             </span>
           </h1>
 
