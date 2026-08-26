@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Copy, Check, Send, Phone, ArrowUp } from 'lucide-react';
+import { Mail, Copy, Check, Send, Phone, ArrowUp, Loader2, AlertCircle } from 'lucide-react';
 
 export const Contact: React.FC = () => {
   const [copied, setCopied] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
 
   const emailAddress = 'john.kurasa@gmail.com';
@@ -18,18 +20,53 @@ export const Contact: React.FC = () => {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormSubmitted(true);
-    setTimeout(() => {
-      setFormSubmitted(false);
-      setFormData({ name: '', email: '', message: '' });
-    }, 4000);
+    if (!formData.name || !formData.email || !formData.message) return;
+
+    setIsSubmitting(true);
+    setFormError(null);
+
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${emailAddress}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          _subject: `New Portfolio Contact Message from ${formData.name}`,
+          _replyto: formData.email,
+          _captcha: 'false',
+        }),
+      });
+
+      if (response.ok) {
+        setFormSubmitted(true);
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        const data = await response.json().catch(() => ({}));
+        setFormError(
+          data.message || 'Unable to send message via form automatically. Please use the direct email link.'
+        );
+      }
+    } catch (err) {
+      setFormError('Network error. Please click the direct email link to send your message.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(
+    `Portfolio Inquiry from ${formData.name || 'Visitor'}`
+  )}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)}`;
 
   return (
     <footer id="contact" className="relative z-20 bg-[#FAF7F0] pt-32 pb-12 px-6 md:px-16 border-t border-[#DCCB9A] overflow-hidden">
@@ -96,7 +133,10 @@ export const Contact: React.FC = () => {
 
           {/* Right Column: Contact Form */}
           <div className="rounded-3xl glass-card border border-[#DCCB9A] p-8 md:p-10 bg-[#FFFDF8] shadow-lg">
-            <h3 className="text-2xl font-bold text-[#1C1C1C] mb-6">Send John a Message</h3>
+            <h3 className="text-2xl font-bold text-[#1C1C1C] mb-2">Send John a Message</h3>
+            <p className="text-xs text-[#6B665D] mb-6">
+              Messages will be routed directly to <span className="font-semibold text-[#C99A2E]">{emailAddress}</span>.
+            </p>
 
             {formSubmitted ? (
               <motion.div
@@ -105,24 +145,46 @@ export const Contact: React.FC = () => {
                 className="p-8 rounded-2xl bg-[#F3EEE3] border border-[#DCCB9A] text-center"
               >
                 <div className="h-12 w-12 rounded-full bg-[#FAF7F0] text-[#C99A2E] border border-[#DCCB9A] flex items-center justify-center mx-auto mb-4">
-                  <Check className="h-6 w-6" />
+                  <Check className="h-6 w-6 text-emerald-600" />
                 </div>
-                <h4 className="text-xl font-bold text-[#1C1C1C] mb-2">Message Delivered!</h4>
-                <p className="text-sm text-[#6B665D] font-normal">
-                  Thank you for reaching out. I will respond to your message promptly.
+                <h4 className="text-xl font-bold text-[#1C1C1C] mb-2">Message Transmitted!</h4>
+                <p className="text-sm text-[#6B665D] font-normal mb-6">
+                  Thank you for reaching out. Your message has been sent directly to <span className="font-semibold text-[#1C1C1C]">{emailAddress}</span>. I will respond to your inquiry promptly.
                 </p>
+                <button
+                  onClick={() => setFormSubmitted(false)}
+                  className="px-6 py-2.5 rounded-xl bg-[#FFFDF8] border border-[#DCCB9A] text-xs font-mono font-bold text-[#C99A2E] hover:bg-[#FAF7F0] transition-colors"
+                >
+                  Send Another Message
+                </button>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
+                {formError && (
+                  <div className="p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3 text-red-700 text-xs font-medium">
+                    <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+                    <div>
+                      <p>{formError}</p>
+                      <a
+                        href={mailtoLink}
+                        className="inline-block mt-2 font-mono text-[#C99A2E] underline font-bold"
+                      >
+                        Click here to send via mail app directly →
+                      </a>
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-xs font-mono text-[#6B665D] font-semibold mb-2 uppercase">Your Name</label>
                   <input
                     type="text"
                     required
+                    disabled={isSubmitting}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Recruiter / Hiring Manager"
-                    className="w-full rounded-xl bg-[#F3EEE3] border border-[#DCCB9A] px-4 py-3.5 text-sm text-[#1C1C1C] placeholder-[#6B665D]/60 focus:border-[#C99A2E] focus:outline-none transition-colors"
+                    className="w-full rounded-xl bg-[#F3EEE3] border border-[#DCCB9A] px-4 py-3.5 text-sm text-[#1C1C1C] placeholder-[#6B665D]/60 focus:border-[#C99A2E] focus:outline-none transition-colors disabled:opacity-50"
                   />
                 </div>
 
@@ -131,10 +193,11 @@ export const Contact: React.FC = () => {
                   <input
                     type="email"
                     required
+                    disabled={isSubmitting}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="recruiter@company.com"
-                    className="w-full rounded-xl bg-[#F3EEE3] border border-[#DCCB9A] px-4 py-3.5 text-sm text-[#1C1C1C] placeholder-[#6B665D]/60 focus:border-[#C99A2E] focus:outline-none transition-colors"
+                    className="w-full rounded-xl bg-[#F3EEE3] border border-[#DCCB9A] px-4 py-3.5 text-sm text-[#1C1C1C] placeholder-[#6B665D]/60 focus:border-[#C99A2E] focus:outline-none transition-colors disabled:opacity-50"
                   />
                 </div>
 
@@ -143,19 +206,30 @@ export const Contact: React.FC = () => {
                   <textarea
                     required
                     rows={4}
+                    disabled={isSubmitting}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="We would like to discuss full-stack internship opportunities with you..."
-                    className="w-full rounded-xl bg-[#F3EEE3] border border-[#DCCB9A] px-4 py-3.5 text-sm text-[#1C1C1C] placeholder-[#6B665D]/60 focus:border-[#C99A2E] focus:outline-none transition-colors resize-none"
+                    className="w-full rounded-xl bg-[#F3EEE3] border border-[#DCCB9A] px-4 py-3.5 text-sm text-[#1C1C1C] placeholder-[#6B665D]/60 focus:border-[#C99A2E] focus:outline-none transition-colors resize-none disabled:opacity-50"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-4 rounded-xl font-mono text-xs font-bold tracking-widest uppercase bg-gradient-to-r from-[#C99A2E] via-[#E7C66A] to-[#C99A2E] text-[#FFFDF8] shadow-md hover:scale-[1.01] transition-all flex items-center justify-center gap-2 font-extrabold"
+                  disabled={isSubmitting}
+                  className="w-full py-4 rounded-xl font-mono text-xs font-bold tracking-widest uppercase bg-gradient-to-r from-[#C99A2E] via-[#E7C66A] to-[#C99A2E] text-[#FFFDF8] shadow-md hover:scale-[1.01] transition-all flex items-center justify-center gap-2 font-extrabold disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <Send className="h-4 w-4" />
-                  <span>TRANSMIT MESSAGE</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>SENDING TO {emailAddress}...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4" />
+                      <span>TRANSMIT MESSAGE</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}
