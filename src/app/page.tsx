@@ -3,6 +3,7 @@
 import React from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
+import { About } from '@/components/About';
 import { Projects } from '@/components/Projects';
 import { Skills } from '@/components/Skills';
 import { Experience } from '@/components/Experience';
@@ -14,10 +15,13 @@ export default function Home() {
       {/* 1. Fixed Header Navigation Bar */}
       <Navbar />
 
-      {/* 2. Primary Hero Section (Matching Reference Design) */}
+      {/* 2. Primary Hero Section */}
       <Hero />
 
-      {/* 3. Portfolio Showcase Sections */}
+      {/* 3. About Me Section (With Small Portrait Photo & Details) */}
+      <About />
+
+      {/* 4. Portfolio Showcase Sections */}
       <Projects />
       <Skills />
       <Experience />

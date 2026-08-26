@@ -96,7 +96,7 @@ export const Contact: React.FC = () => {
 
           {/* Right Column: Contact Form */}
           <div className="rounded-3xl glass-card border border-[#DCCB9A] p-8 md:p-10 bg-[#FFFDF8] shadow-lg">
-            <h3 className="text-2xl font-bold text-[#1C1C1C] mb-6">Send Kurasa a Message</h3>
+            <h3 className="text-2xl font-bold text-[#1C1C1C] mb-6">Send John a Message</h3>
 
             {formSubmitted ? (
               <motion.div

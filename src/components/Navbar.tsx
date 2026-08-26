@@ -19,19 +19,20 @@ export const Navbar: React.FC = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 py-4 bg-[#FAF7F0]/90 backdrop-blur-md border-b border-[#DCCB9A]/30 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 flex items-center justify-between relative">
-        {/* Mobile Left Hamburger Menu Button */}
-        <div className="flex md:hidden items-center">
+        {/* Left Side: Brand Name & Mobile Menu Toggle */}
+        <div className="flex items-center gap-3 z-10">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2.5 rounded-xl border border-[#DCCB9A] bg-[#FFFDF8] text-[#C99A2E] shadow-sm"
+            className="md:hidden p-2 rounded-xl border border-[#DCCB9A] bg-[#FFFDF8] text-[#C99A2E] shadow-sm"
             aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X className="h-5 w-5 text-[#C99A2E]" /> : <Menu className="h-5 w-5 text-[#C99A2E]" />}
           </button>
-        </div>
 
-        {/* Left Side Spacer for Desktop */}
-        <div className="hidden md:block w-20" />
+          <a href="#top" className="font-serif font-bold text-base sm:text-lg text-[#0F172A] tracking-tight hover:text-[#C99A2E] transition-colors">
+            John Wesly Kurasa<span className="text-[#C99A2E]">.</span>
+          </a>
+        </div>
 
         {/* Centered Navigation Bar (Desktop) */}
         <nav className="hidden md:flex items-center gap-1.5 p-1.5 rounded-full bg-[#FFFDF8]/90 backdrop-blur-md border border-[#DCCB9A] shadow-sm absolute left-1/2 -translate-x-1/2">
