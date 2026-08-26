@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Code2, ArrowRight, ArrowDown } from 'lucide-react';
 
 const TITLES = [
@@ -13,17 +13,45 @@ const TITLES = [
 
 export const Hero: React.FC = () => {
   const [titleIndex, setTitleIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (shouldReduceMotion) return;
+    if (shouldReduceMotion) {
+      setDisplayedText(TITLES[0]);
+      return;
+    }
 
-    const interval = setInterval(() => {
-      setTitleIndex((prev) => (prev + 1) % TITLES.length);
-    }, 3500); // Hold ~2.8s + 0.7s transition duration = 3.5s cycle
+    const currentTitle = TITLES[titleIndex];
+    let timer: NodeJS.Timeout;
 
-    return () => clearInterval(interval);
-  }, [shouldReduceMotion]);
+    if (!isDeleting) {
+      // Type letter by letter
+      if (displayedText.length < currentTitle.length) {
+        timer = setTimeout(() => {
+          setDisplayedText(currentTitle.slice(0, displayedText.length + 1));
+        }, 60); // 60ms per letter typing speed
+      } else {
+        // Hold completed title for ~2.5 seconds
+        timer = setTimeout(() => {
+          setIsDeleting(true);
+        }, 2500);
+      }
+    } else {
+      // Erase letter by letter
+      if (displayedText.length > 0) {
+        timer = setTimeout(() => {
+          setDisplayedText(currentTitle.slice(0, displayedText.length - 1));
+        }, 30); // 30ms per letter deleting speed
+      } else {
+        setIsDeleting(false);
+        setTitleIndex((prev) => (prev + 1) % TITLES.length);
+      }
+    }
+
+    return () => clearTimeout(timer);
+  }, [displayedText, isDeleting, titleIndex, shouldReduceMotion]);
 
   const scrollToProjects = () => {
     const el = document.getElementById('projects');
@@ -60,36 +88,26 @@ export const Hero: React.FC = () => {
             </span>
           </div>
 
-          {/* Main Title Heading with Smooth Rotating Headline */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-semibold text-[#0F172A] tracking-tight leading-[1.15]">
-            Kurasa John Wesly <br />
-            <span className="relative inline-block h-[1.25em] w-full overflow-hidden align-bottom">
-              {shouldReduceMotion ? (
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F0C75E] via-[#D4AF37] to-[#C99A2E] font-serif font-bold italic block">
-                  Full Stack Developer
-                </span>
-              ) : (
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={TITLES[titleIndex]}
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -16 }}
-                    transition={{ duration: 0.7, ease: [0.4, 0.0, 0.2, 1] }}
-                    className="text-transparent bg-clip-text bg-gradient-to-r from-[#F0C75E] via-[#D4AF37] to-[#C99A2E] font-serif font-bold italic block absolute left-0 top-0 whitespace-nowrap"
-                  >
-                    {TITLES[titleIndex]}
-                  </motion.span>
-                </AnimatePresence>
+          {/* Main Title Heading with Decreased Font Size & Letter-by-Letter Typewriter Animation */}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-semibold text-[#0F172A] tracking-tight leading-[1.2]">
+            Kurasa John Wesly
+          </h1>
+
+          {/* Rotating Subheading: Decreased Font Size + Letter by Letter Animation */}
+          <div className="mt-2 min-h-[2rem] sm:min-h-[2.75rem] flex items-center">
+            <span className="text-xl sm:text-3xl lg:text-4xl font-serif font-bold italic text-transparent bg-clip-text bg-gradient-to-r from-[#F0C75E] via-[#D4AF37] to-[#C99A2E] tracking-tight inline-block">
+              {displayedText}
+              {!shouldReduceMotion && (
+                <span className="inline-block w-[3px] h-[0.85em] bg-[#C99A2E] ml-1 align-middle animate-pulse" />
               )}
             </span>
-          </h1>
+          </div>
 
           {/* Accent Underline Bar */}
           <div className="h-1 w-20 bg-[#C99A2E] rounded-full my-6" />
 
           {/* Subtitle / Description */}
-          <p className="text-base sm:text-lg md:text-xl text-[#475569] font-normal leading-relaxed max-w-xl">
+          <p className="text-base sm:text-lg text-[#475569] font-normal leading-relaxed max-w-xl">
             Data Science &amp; Engineering Student at NIAT (9.32 CGPA). <br className="hidden sm:inline" />
             Building production-ready MERN web platforms with scalable architectures.
           </p>
