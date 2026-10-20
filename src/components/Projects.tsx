@@ -47,7 +47,7 @@ const PROJECTS: Project[] = [
     id: 'buy-pilot',
     title: 'BuyPilot',
     subtitle: 'AI-Assisted Smart Product Discovery Engine',
-    categories: ['AI & Web', 'E-Commerce'],
+    categories: ['AI & Web'],
     description:
       'Intelligent AI-assisted product recommendation and discovery web application designed to help users search, compare, and discover items through natural language search and smart filters.',
     features: [
@@ -101,7 +101,7 @@ const PROJECTS: Project[] = [
     id: 'trendycutz',
     title: 'TrendyCutz',
     subtitle: 'Salon Services & Appointment Booking',
-    categories: ['Web Application'],
+    categories: ['E-Commerce', 'Web Application'],
     description:
       'Salon platform for exploring services, booking appointments, and managing customer and staff workflows.',
     features: [
