@@ -8,7 +8,7 @@ interface Project {
   id: string;
   title: string;
   subtitle: string;
-  category: 'Full Stack MERN' | 'AI & Web' | 'E-Commerce';
+  category: 'Full Stack MERN' | 'AI & Web' | 'E-Commerce' | 'Web Application';
   description: string;
   features: string[];
   tags: string[];
@@ -37,24 +37,6 @@ const PROJECTS: Project[] = [
     githubUrl: 'https://github.com/JohnWeslyKurasa/toys-shop',
   },
   {
-    id: 'voxbridge',
-    title: 'VoxBridge',
-    subtitle: 'Real-Time AI Voice & Communication Bridge',
-    category: 'AI & Web',
-    description:
-      'Cutting-edge real-time voice translation and audio bridge platform enabling seamless speech synthesis, low-latency audio processing, and responsive cross-platform communication interfaces.',
-    features: [
-      'Web Audio Stream Processing & Speech Synthesis',
-      'Low-Latency API Routing with Node.js & Express',
-      'Reactive UI State Management with React.js',
-      'Deployed Production Microservice Architecture',
-    ],
-    tags: ['React.js', 'Node.js', 'Express.js', 'Web Audio API', 'TypeScript', 'Vercel'],
-    metrics: 'Live Vercel Platform',
-    demoUrl: 'https://voxbridge-seven.vercel.app/',
-    githubUrl: 'https://github.com/JohnWeslyKurasa/voxbridge',
-  },
-  {
     id: 'buy-pilot',
     title: 'BuyPilot',
     subtitle: 'AI-Assisted Smart Product Discovery Engine',
@@ -73,26 +55,80 @@ const PROJECTS: Project[] = [
     githubUrl: 'https://github.com/JohnWeslyKurasa/buy-pilot',
   },
   {
-    id: 'shopy-friendly',
-    title: 'Shopy Friendly',
-    subtitle: 'Modern Responsive Online Shopping Portal',
-    category: 'E-Commerce',
+    id: 'skillradar',
+    title: 'SkillRadar',
+    subtitle: 'Market-Driven Career Intelligence Engine',
+    category: 'Web Application',
     description:
-      'Lightweight online shopping website built with responsive layouts, user authentication, catalog browsing, shopping cart workflow, and optimized mobile user experience.',
+      'Analyzes live job postings to surface in-demand skills, compare them with role baselines, and identify prioritized skill gaps for career development.',
     features: [
-      'User Sign-Up, Login & Session Management',
-      'Fast Catalog Search & Dynamic Product Cards',
-      'Responsive Flexbox & Grid UI Layouts',
-      'Deployed Production Frontend & Backend',
+      'Fetches job postings for a selected role and location',
+      'Extracts skills from job descriptions using a curated taxonomy',
+      'Calculates skill frequency across job postings',
+      'Generates shareable reports with prioritized recommendations',
     ],
-    tags: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'CSS3', 'Vercel'],
-    metrics: 'Full Stack Web',
-    demoUrl: 'https://shopy-friendly.vercel.app',
-    githubUrl: 'https://github.com/JohnWeslyKurasa/shopy-friendly',
+    tags: ['Python', 'FastAPI', 'MongoDB Atlas', 'Adzuna API'],
+    metrics: 'Career Intelligence Platform',
+    demoUrl: 'https://skillradar-v6as.onrender.com/',
+    githubUrl: 'https://github.com/JohnWeslyKurasa/SkillRadar',
+  },
+  {
+    id: 'event-manager',
+    title: 'Event Manager',
+    subtitle: 'Event Planning & Ticketing Platform',
+    category: 'Web Application',
+    description:
+      'Full-stack event management platform with organizer and attendee workflows for browsing events, managing ticket tiers, and registering for events.',
+    features: [
+      'Separate organizer and attendee experiences',
+      'Event and ticket-tier management',
+      'Attendee registration for events',
+      'React and TypeScript client with an Express API',
+    ],
+    tags: ['React', 'TypeScript', 'Express', 'PostgreSQL'],
+    metrics: 'Event Management Platform',
+    demoUrl: 'https://event-manager-seven-xi.vercel.app/events',
+    githubUrl: 'https://github.com/JohnWeslyKurasa/event_manager',
+  },
+  {
+    id: 'trendycutz',
+    title: 'TrendyCutz',
+    subtitle: 'Salon Services & Appointment Booking',
+    category: 'Web Application',
+    description:
+      'Salon platform for exploring services, booking appointments, and managing customer and staff workflows.',
+    features: [
+      'Salon service and team pages',
+      'Appointment booking workflow',
+      'Customer accounts and staff hiring pages',
+      'Admin tools for managing salon operations',
+    ],
+    tags: ['React', 'Vite', 'Express', 'MongoDB', 'Mongoose'],
+    metrics: 'Salon Booking Platform',
+    demoUrl: 'https://trendy-cutz-5q01zgc3m-nextgen-developers.vercel.app/',
+    githubUrl: 'https://github.com/JohnWeslyKurasa/TrendyCutz',
+  },
+  {
+    id: 'campuspath',
+    title: 'CampusPath',
+    subtitle: 'Student Placement Readiness Demo',
+    category: 'Web Application',
+    description:
+      'Full-stack portfolio demo that generates a synthetic student cohort and trains a placement classifier using academic, skills, project, internship, certification, and DSA features. Predictions are illustrative only and are not intended for real placement decisions.',
+    features: [
+      'Placement readiness scoring across six student profile features',
+      'Batch CSV roster predictions with row-level validation',
+      'Exportable results with an individual feature score breakdown',
+      'Reproducible model training on synthetic cohort data',
+    ],
+    tags: ['React', 'Python', 'FastAPI', 'scikit-learn', 'Logistic Regression'],
+    metrics: 'Synthetic Placement Demo',
+    demoUrl: 'https://campuspath-1.onrender.com/',
+    githubUrl: 'https://github.com/JohnWeslyKurasa/CampusPath',
   },
 ];
 
-const CATEGORIES = ['All', 'Full Stack MERN', 'AI & Web', 'E-Commerce'] as const;
+const CATEGORIES = ['All', 'Full Stack MERN', 'AI & Web', 'E-Commerce', 'Web Application'] as const;
 
 export const Projects: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -120,7 +156,7 @@ export const Projects: React.FC = () => {
             </h2>
 
             <p className="mt-4 text-[#6B665D] text-base md:text-lg max-w-2xl font-normal">
-              Detailed breakdown of production MERN stack web applications, AI platforms, and real-time audio software built and deployed live on Vercel by Kurasa John Wesly.
+              A selection of web applications, career intelligence, student placement, event management, e-commerce, and salon booking projects built by Kurasa John Wesly.
             </p>
           </div>
 
