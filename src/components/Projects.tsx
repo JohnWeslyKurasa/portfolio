@@ -4,11 +4,18 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Github, ArrowUpRight, Code2, CheckCircle2 } from 'lucide-react';
 
+type ProjectCategory =
+  | 'Full Stack MERN'
+  | 'AI & Web'
+  | 'E-Commerce'
+  | 'Machine Learning'
+  | 'Web Application';
+
 interface Project {
   id: string;
   title: string;
   subtitle: string;
-  category: 'Full Stack MERN' | 'AI & Web' | 'E-Commerce' | 'Web Application';
+  categories: ProjectCategory[];
   description: string;
   features: string[];
   tags: string[];
@@ -22,7 +29,7 @@ const PROJECTS: Project[] = [
     id: 'mother-n-toddler',
     title: 'Mother N Toddler',
     subtitle: 'Production MERN Stack Retail E-Commerce Platform',
-    category: 'Full Stack MERN',
+    categories: ['Full Stack MERN', 'E-Commerce'],
     description:
       'Full-scale retail e-commerce system featuring secure user authentication, dynamic product catalog management, persistent cart & wishlist state, live order tracking, and an administrative dashboard for inventory & sales metrics.',
     features: [
@@ -40,7 +47,7 @@ const PROJECTS: Project[] = [
     id: 'buy-pilot',
     title: 'BuyPilot',
     subtitle: 'AI-Assisted Smart Product Discovery Engine',
-    category: 'AI & Web',
+    categories: ['AI & Web', 'E-Commerce'],
     description:
       'Intelligent AI-assisted product recommendation and discovery web application designed to help users search, compare, and discover items through natural language search and smart filters.',
     features: [
@@ -58,7 +65,7 @@ const PROJECTS: Project[] = [
     id: 'skillradar',
     title: 'SkillRadar',
     subtitle: 'Market-Driven Career Intelligence Engine',
-    category: 'Web Application',
+    categories: ['AI & Web', 'Web Application'],
     description:
       'Analyzes live job postings to surface in-demand skills, compare them with role baselines, and identify prioritized skill gaps for career development.',
     features: [
@@ -76,7 +83,7 @@ const PROJECTS: Project[] = [
     id: 'event-manager',
     title: 'Event Manager',
     subtitle: 'Event Planning & Ticketing Platform',
-    category: 'Web Application',
+    categories: ['Web Application'],
     description:
       'Full-stack event management platform with organizer and attendee workflows for browsing events, managing ticket tiers, and registering for events.',
     features: [
@@ -94,7 +101,7 @@ const PROJECTS: Project[] = [
     id: 'trendycutz',
     title: 'TrendyCutz',
     subtitle: 'Salon Services & Appointment Booking',
-    category: 'Web Application',
+    categories: ['Web Application'],
     description:
       'Salon platform for exploring services, booking appointments, and managing customer and staff workflows.',
     features: [
@@ -112,7 +119,7 @@ const PROJECTS: Project[] = [
     id: 'campuspath',
     title: 'CampusPath',
     subtitle: 'Student Placement Readiness Demo',
-    category: 'Web Application',
+    categories: ['Machine Learning', 'Web Application'],
     description:
       'Full-stack portfolio demo that generates a synthetic student cohort and trains a placement classifier using academic, skills, project, internship, certification, and DSA features. Predictions are illustrative only and are not intended for real placement decisions.',
     features: [
@@ -128,15 +135,22 @@ const PROJECTS: Project[] = [
   },
 ];
 
-const CATEGORIES = ['All', 'Full Stack MERN', 'AI & Web', 'E-Commerce', 'Web Application'] as const;
+const CATEGORIES = [
+  'All',
+  'Full Stack MERN',
+  'AI & Web',
+  'E-Commerce',
+  'Machine Learning',
+  'Web Application',
+] as const;
 
 export const Projects: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<(typeof CATEGORIES)[number]>('All');
 
   const filteredProjects =
     selectedCategory === 'All'
       ? PROJECTS
-      : PROJECTS.filter((p) => p.category === selectedCategory);
+      : PROJECTS.filter((project) => project.categories.includes(selectedCategory));
 
   return (
     <section id="projects" className="relative z-30 bg-[#FAF7F0] py-32 px-6 md:px-16 overflow-hidden border-t border-[#DCCB9A]">
@@ -147,7 +161,7 @@ export const Projects: React.FC = () => {
             <div className="inline-flex items-center gap-2 rounded-full border border-[#DCCB9A] bg-[#FFFDF8] px-4 py-1.5 mb-4 shadow-sm">
               <Code2 className="h-4 w-4 text-[#C99A2E]" />
               <span className="text-xs font-mono tracking-widest text-[#C99A2E] font-bold uppercase">
-                PRODUCTION FULL-STACK PROJECTS
+                FEATURED WEB & MACHINE LEARNING PROJECTS
               </span>
             </div>
 
@@ -194,10 +208,15 @@ export const Projects: React.FC = () => {
                 <div>
                   {/* Category & Status Bar */}
                   <div className="flex items-center justify-between gap-4 mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-[#C99A2E] font-bold tracking-wider uppercase">
-                        {project.category}
-                      </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {project.categories.map((category) => (
+                        <span
+                          key={category}
+                          className="text-xs font-mono text-[#C99A2E] font-bold tracking-wider uppercase"
+                        >
+                          {category}
+                        </span>
+                      ))}
                       <span className="text-[#6B665D]">•</span>
                       <span className="text-xs font-mono text-[#C99A2E] font-semibold">
                         {project.metrics}
